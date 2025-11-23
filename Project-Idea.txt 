@@ -1,0 +1,669 @@
+Life Inbox Zero — The Smart Life Dashboard
+A unified AI-powered life management system that:
+absorbs chaos
+extracts actionable items
+auto-organizes them into a dashboard
+Let users take actions with one click
+This is not a simple organization.
+This is: “Drop your digital mess and get a structured life system instantly.”
+Core Value: Drop any screenshot, PDF, message, link, or file — and Life Inbox Zero extracts the important stuff, organizes it, and turns chaos into clean, actionable items automatically.
+The User Pain Examples It Solves:
+Too many screenshots with important info
+PDFs with dates, tasks, deadlines
+Random text notes
+Images of schedules
+Chat messages saved as screenshots
+Receipts
+Links forgotten after saving
+
+Smart Actions (via MCP Tools)
+For each detected item, it can:
+create calendar events
+create to-do items
+rename and organize files
+suggest folders
+convert images → text
+classify content
+generate summaries
+export a daily or weekly digest
+save to the user’s “vault” directories
+UI Features
+Drag-and-drop zone
+Items animate into the “Life Inbox”
+Each detected item shows: icon, extracted info, suggested actions
+Examples: 
+📅 “Dinner at 7 pm on Friday — add to calendar?”
+📝 “Task detected: Follow up with John — add to task list?”
+📄 “Bill: $37.20 — save to Bills folder?”
+Direction Focus and Dashboard Style Selection
+Direction Focus: “Smart Life Dashboard” instead of a simple dashboard
+Inbox → tasks/events/files → dashboard where the user acts on them.
+Example: Imagine someone finds an old screenshot: “Pay rent by 5th November — $1200”. Then, the system
+Adds it to a “Bills” module
+Updates monthly spending
+Shows in “Upcoming Payments”
+Shows trends
+Has a visual dashboard tile
+Cross-links with calendar and tasks
+Dashboard Style: Fun + Friendly (Consumer app vibe).
+Color-coded cards, icons, and lots of personality make it feel like a personal assistant.
+Color-coded sections: yellow=task, blue=events,Pink=Reminders,Green=Documents, Purple=Links/Bookmarks 
+Friendly Microcopy: Instead of “Processing your file…” it says: “Sorting your chaos…”/“Extracting important bits…”/“Cleaning up your digital mess…”
+Animated Cards: When a user drops a file: The card slides in, Category colors pop, Little icons animate
+A super-friendly mascot option: A tiny assistant in the corner, like: 📨 "Got something for me?"/📁 "Nice! Let me organize that."/🗂 "Boom. Inbox sorted.”
+So, choosing Card Garden: A grid of floating colorful cards, New items bloom into the grid
+
+⭐ Phase 1 — The Core Blueprint
+Input:
+📸 Screenshots (most universal – events, tasks, bills, reminders)
+📄 PDFs (simple parsing via PyMuPDF or pdfminer)
+📝 Text dumps / notes (very easy)
+🔗 Links (title + metadata extraction)
+🖼 Images with text (OCR → classification)
+Emails 
+(Live gmail integration using oauth)
+The last 7 days of emails will be auto read
+Output: 
+🗓 Events
+📝 Tasks
+💸 Bills / Payments
+📁 Documents
+🔗 Links
+🎗 Reminders
+Actions Type: Agent Powered. 
+User clicks “Process all items”
+Agent plans + executes actions via MCP tools:
+create calendar events
+generate task lists
+organize folders
+export summary
+So, basically an agent that:
+Plans
+Decides
+Organizes
+Executes MCP tools
+Updates the dashboard
+Performs tasks end-to-end
+
+Phase-2: Full Architecture + UI Blueprint
+
+
+Your system has 6 core modules:
+Input Layer (Described in Phase-1)
+Extraction Layer
+Categorization Layer
+UI Layer
+Agent Layer + MCP Tool Layer
+Folder Structure
+
+📥 2. File Input Extraction Pipeline
+Screenshots / Images
+Apply OCR using Tesseract or PaddleOCR
+Clean text (remove noise)
+PDFs
+PyMuPDF for fast extraction
+On error → fallback to OCR
+Links
+Fetch metadata (title, description, favicon)
+Text Inputs
+Used as-is
+All end up in this format:
+{"type": "email" | "pdf" | "image" | "link" | "text","raw_content": "...","extracted_text": "...","metadata": {...}}
+🧠 3. Categorization Engine (LLM call)
+Runs one structured prompt:
+TASK: Classify the content into one of:
+Event
+Task
+Bill / Payment
+Reminder
+Document
+Link
+And extract structured fields: 
+For example for a bill:
+{"category": "bill","title": "Water Bill","amount": 18.72,"due_date": "2025-11-21","confidence": 0.92}
+For an event:
+{"category": "event","title": "Dinner with Emma","datetime": "2025-11-18 19:00","location": "Downtown Cafe"}
+🌈 4. Card Garden UI (Option 3 Chosen)
+Visual Vibe:
+Playful
+Color-coded
+Animated
+Slight shadow
+Rounded corners
+Bounce-in animations
+Hover scaling
+Layout:
+[ Upload Zone ]   [ Gmail Connect]
+--------------------------------------
+|  🌼 Task Card  | 💙 Event Card  |
+--------------------------------------
+| 💸 Bill Card   | 📁 Document    |
+--------------------------------------
+| 🔗 Link Card   | 🎗 Reminder    |
+--------------------------------------
+Card fields:
+Title
+Category icon + color
+Key extracted info
+Action buttons:
+
+
+"Add to Calendar"
+"Add Task"
+"Save File"
+"Mark Done"
+“Let Agent Handle”
+
+
+Cards animate into the grid as soon as categorization completes.
+🤖 5. Agentic Automation (Track 2 Killer Feature)
+When the user clicks: “Organize My Life”, Agent does:
+Produces a “wrap-up card”: 
+✨ All items organized!
+- 3 events added to your calendar
+- 4 tasks created
+- 2 bills saved
+- 1 document stored
+MCP Tools Needed:
+File manager (read/write folders), Calendar tool
+Optional: Notion API via MCP wrapper, Email sender tool
+An autonomous agent that:
+reads your last 7 days of Gmail
+extracts events, bills, documents, tasks, reminders
+generates a visual Card Garden
+and then — when the user clicks “Organize My Life” — it autonomously uses Google ADK tools to:
+add events to Google Calendar
+save files (PDFs, bills, attachments) to Google Drive
+create Drive folders automatically
+extract tasks into a task document
+produce a weekly digest
+🗂 6. Folder Structure (HF Space)
+/app
+  /components
+  /agents
+  /mcp_tools
+  /pipeline
+  /utils
+  main.py
+/gmail_credentials
+/token.json
+/assets
+README.md
+Phase 3: Assumption
+Platform access: Drive, Gmail, Calendar
+Drive Integration Type: 
+User level Drive organization.
+/Life Inbox Zero/
+/Events/
+/Bills/
+/Documents/
+/Receipts/
+/Tasks/
+/Manual Inputs/
+/Summaries/ 
+A weekly digest summary file saved automatically: generate AND email it to the user (via Gmail ADK)
+Weekly Digest email source: User can toggle between
+“Send to myself” (default)
+“Send to another email”
+
+PHASE 3 — Full Implementation Blueprint
+
+
+🔶 1. System Architecture Overview
+Core Modules:
+UI Layer (Gradio 6, Card Garden)
+Google ADK Tools (Gmail, Drive, Calendar)
+Input Ingestion (Email, PDFs, Screenshots, Links)
+Extraction (OCR, PDF text, metadata)
+Categorization Engine (LLM structured)
+Agent Planner (autonomous workflows)
+Weekly Digest Generator (PDF + Email)
+🧩 2. Folder & File Structure
+/app
+  /ui
+     card_garden.py
+     components.py
+     theme.py
+  /pipeline
+     email_ingest.py
+     file_ingest.py
+     ocr.py
+     pdf_extractor.py
+     link_fetch.py
+     normalize.py
+  /categorizer
+     classify.py
+     schema.json
+  /agent
+     planner.py
+     actions.py
+     autonomy.py
+  /digest
+     digest_builder.py
+     digest_emailer.py
+     templates/
+        weekly_summary.html
+  /mcp_tools
+     calendar_mcp.py
+     file_manager_mcp.py
+     local_vector_mcp.py (optional)
+  app.py
+  README.md
+  requirements.txt
+/google_adk
+   gmail_client.py
+   drive_client.py
+   calendar_client.py
+/assets
+   icons/
+   demo_files/
+/token_store
+   tokens.json (ADK handles securely)
+📬 3. Gmail Ingestion Flow (Google ADK)
+Agent Calls: 
+gmail.search("newer_than:7d")
+gmail.get_message(id)
+Extract: sender, subject, datetime, body text, attachments (PDF/JPG/PNG). Attachments are auto-sent through the extraction pipeline
+📥 4. Other Input Types
+The user can upload:
+PDFs/screenshots/images/text/links
+For files:
+Images → OCR
+PDFs → PyMuPDF → fallback OCR
+Links → fetch title/description
+All normalized into a single unified text format.
+
+🧠 5. Categorization Engine (LLM Structured)
+One structured LLM prompt that detects:
+task
+event
+Bill
+document
+receipt
+link
+reminder
+Each card comes back with: 
+{
+  "category": "...",
+  "title": "...",
+  "fields": {...},
+  "confidence": 0.86
+}
+
+🌈 6. Card Garden UI
+Cards animate into a grid with:
+pastel colors
+category icons
+hover scaling
+smooth "grow" animations
+action buttons:
+Save to Drive
+Add to Calendar
+Convert to Task
+Let Agent Handle
+Gradio's 6 components are used for smooth UI.
+🧾 7. Weekly Digest Generator (PDF + Email)
+Digest contains: 
+Events upcoming (extracted from email), 
+Bills due
+Documents processed
+Tasks created
+Total items organized
+Links extracted
+Attachments saved
+Then
+Converted to PDF (reportlab simple layout)
+Uploaded to /Life Inbox Zero/Summaries/
+Emailed to:
+user’s Gmail address by default
+alternate email if user sets it
+
+
+Phase-4: Agentic Architecture (Pre-Assumptions)
+Multi-Agent System with a manager agent involved
+Manager Agent behaviour: Minimalistic (Short. Clear. Confident). Your Manager Agent will behave like this:
+“Understood.
+ Step 1: Fetching emails from the past 7 days.
+ Calling Ingestion Agent…”
+Manager Agent reveals its internal plan via an Explicit Step-by-Step Plan.
+	Plan:
+		1. IngestionAgent → fetch emails (past 7 days)
+		2. ExtractionAgent → process attachments
+		3. CategorizationAgent → classify items
+		4. OrganizerAgent → create events, upload files
+		5. SummaryAgent → generate & email digest
+	Executing step 1…
+	Executing Tool X…
+	Finally, (Summary Y)
+Manager agent will stream update (each step sent separately)
+Plan:
+	1. Fetch emails from the last 7 days
+	2. Extract contents
+	3. Categorize items
+	4. Create events, tasks, and reminders
+	5. Generate and send a weekly digest
+	…
+
+	Executing step 1 (Ingestion Agent)…
+	✓ 42 emails fetched
+	Executing step 2 (Extraction Agent)…
+	✓ 87 attachments processed
+	Executing step 3 (Categorization Agent)…
+	✓ 87 items classified
+	…
+
+	Done. Your life inbox is organized.
+	Digest emailed. Drive updated.
+
+
+Intelligent Mixed Mode: 
+Manager auto-runs safe steps (ingestion → extraction → categorization)
+Pauses + asks user before irreversible steps (calendar events, email sending, drive upload)
+Phase-4: Agentic Architecture
+1. HIGH-LEVEL ARCHITECTURE (TEXT DIAGRAM)
+	User
+  └── Manager Agent (Minimalist, Streaming)
+        ├── Ingestion Agent
+        ├── Extraction Agent
+        ├── Categorization Agent
+        ├── Organizer Agent
+        └── Summary Agent
+MCP Tools connected:
+Gmail ADK (read last 7 days)
+Google Drive ADK
+Calendar ADK
+Custom MCP for PDF → text
+Custom MCP for OCR + images
+UI: Gradio 6 chat + side panel cards (“Life Cards”)
+
+
+2. HIGH-LEVEL ARCHITECTURE
+
+6 ADK Agents total
+Using Google ADK’s agent runtime, planning, and skills system:
+1. ManagerAgent (Planner + Delegator)
+Generates a full plan
+Streams steps (judges want this)
+Routes tasks to subagents
+Waits for approvals for irreversible actions
+Consolidates results
+2. IngestionAgent
+Uses ADK Gmail tools to fetch the last 7 days
+Downloads attachments
+Sends clean, structured items to the manager
+3. ExtractionAgent
+OCR via your MCP OCR server
+PDF extraction via the MCP PDF server
+Normalizes all text into clean blocks
+4. CategorizationAgent
+Uses Gemini models inside ADK
+Classifies items into:Events, Tasks, Receipts, Bills, Docs, Reminders, misc
+Detects dates, amounts, deadlines, and vendors
+5. OrganizerAgent
+Uses ADK Calendar + Drive
+But asks the user for approval (your Mode C)
+Creates events
+Uploads bills & receipts to Drive
+Stores metadata
+6. SummaryAgent
+Generates a weekly digest
+Creates PDF via ADK + Gemini
+Saves file to Drive
+Returns digest to UI
+3. MANAGER AGENT SYSTEM PROMPT
+You are the Manager Agent for “Life Inbox Zero”.
+
+Style:
+- Minimalist
+- Clear
+- Direct
+- No fluff
+- No jokes
+- No personality empathy
+
+Your responsibilities:
+1. Understand user intent
+2. Create a clear step-by-step plan
+3. Stream each step as it executes
+4. Delegate to the correct sub-agent
+5. Wait for responses
+6. Move to the next step
+7. Provide a final concise summary
+
+When responding to the user:
+- Show your plan first.
+- Then execute each step one by one.
+- For every step: print “Executing step X…”
+- After receiving results: print “✓ Completed step X”
+- At the end: produce final clean output.
+
+Never guess.
+Never hallucinate.
+Never skip reasoning.
+Do not do the work of sub-agents.
+5. SUB-AGENT PROMPTS
+5.1 Ingestion Agent
+Role: Fetch inputs (email + uploads)
+Input: Time window (7 days)
+Tools: Gmail ADK + Gradio upload component
+Output: List of raw items (email bodies + attachments)
+Format: JSON list
+Strict: No classification, no extraction
+
+5.2 Extraction Agent
+Role: Convert raw inputs into structured text
+Handles:
+- Image OCR
+- PDF extraction
+- Parsing email bodies
+Output: "content_blocks": [ ... ]
+Do not classify.
+
+5.3 Categorization Agent
+Role: Classify each content block into:
+- task
+- event
+- bill
+- document
+- receipt
+- reminder
+- link
+- misc
+
+Extract:
+- dates
+- amounts
+- deadlines
+- titles
+- descriptions
+
+Output: List of “cards”
+
+
+5.4 Organizer Agent
+Role: Turn cards into actions
+Uses:
+- Calendar ADK
+- Drive ADK
+- (optional) Tasks via Drive folder structure
+Actions:
+- Create events
+- Upload documents
+- Create folders
+- Save receipts
+Output: “organization_summary”
+
+5.5 Summary Agent
+Role: Generate final weekly digest
+Output includes:
+- total items processed
+- events created
+- uploads completed
+- reminders
+- deadlines in the next 7 days
+- PDF digest uploaded to Drive
+
+6. INTERNAL MESSAGE FORMATS
+Manager → Sub-Agent
+{
+  "agent": "ExtractionAgent",
+  "action": "process",
+     		  "payload": { ... }
+}
+Sub-Agent → Manager
+{
+  "status": "success",
+  "result": { ... }
+}
+
+
+7. MANAGER PLANNING (STEP-BY-STEP) (Example)
+Plan:
+1. IngestionAgent → fetch last 7 days email + uploads
+2. ExtractionAgent → extract contents
+3. CategorizationAgent → create life cards
+4. OrganizerAgent → create events, reminders, drive uploads
+5. SummaryAgent → build digest
+
+Executing step 1...
+...
+
+8. TOOL ORCHESTRATION MAP
+Email ingestion:
+gmail.users.messages.list
+Gmail.users.messages.get
+“past 7 days” filter via query: newer_than:7d
+Drive operations:
+drive.files.create
+drive.files.update
+drive.files.list
+Calendar operations:
+calendar.events.insert
+Custom MCP:
+/pdf/extract
+/ocr/image
+/scrape/url
+
+
+
+9. DIRECTORY STRUCTURE
+life_inbox_zero/
+│
+├── adk.yaml
+├── requirements.txt
+├── README.md
+│
+├── agents/
+│   ├── manager_agent.py
+│   ├── ingestion_agent.py
+│   ├── extraction_agent.py
+│   ├── categorization_agent.py
+│   ├── organizer_agent.py
+│   └── summary_agent.py
+│
+├── servers/
+│   ├── ocr_server/
+│   │   ├── server.py
+│   │   ├── requirements.txt
+│   │   └── README.md
+│   │
+│   └── pdf_server/
+│       ├── server.py
+│       ├── requirements.txt
+│       └── README.md
+│
+├── utils/
+│   ├── schemas.py
+│   ├── helpers.py
+│   ├── gmail_ingest.py
+│   ├── pdf_tools.py
+│   ├── classification.py
+│   └── summary_tools.py
+│
+├── ui/
+│   ├── app.py
+│   ├── components.py
+│   └── state.py
+│
+└── main.py
+Adk.yml 
+
+project: LifeInboxZeroADK
+description: >
+  Life Inbox Zero — A multi-agent personal life organizer powered by
+  the Google ADK, MCP servers, and a hybrid chat + dashboard UI.
+  Automatically ingests the last 7 days of email, extracts documents,
+  classifies content, organizes tasks/events/bills, and prepares weekly summaries.
+
+runtime:
+  type: python
+  entrypoint: main.py
+  mode: single_process   # ✔ Option A confirmed
+
+ui:
+  app: ui/app.py
+  title: Life Inbox Zero
+  icon: https://huggingface.co/datasets/hf-internal-testing/icons/resolve/main/mail.png
+
+agents:
+  - id: manager
+    path: agents/manager_agent.py
+    model: "gemini-2.5-pro"
+    description: Central coordinator agent. Plans workflow, supervises other agents, maintains system reasoning.
+
+  - id: ingestion
+    path: agents/ingestion_agent.py
+    model: "gemini-2.5-flash"
+    description: Fetches last 7 days of Gmail using ADK Gmail tools. Emits list of processed emails.
+
+  - id: extraction
+    path: agents/extraction_agent.py
+    model: "gemini-2.5-flash"
+    description: Extracts files from emails + documents using OCR & PDF MCP servers.
+
+  - id: categorization
+    path: agents/categorization_agent.py
+    model: "gemini-2.5-flash"
+    description: Classifies email/document content into tasks, events, receipts, bills, reminders.
+
+  - id: organizer
+    path: agents/organizer_agent.py
+    model: "gemini-2.5-pro"
+    description: Builds user-facing structured objects (task list, calendar events, bill reminders).
+
+  - id: summary
+    path: agents/summary_agent.py
+    model: "gemini-2.5-pro"
+    description: Generates weekly digest view + PDF summary for the UI.
+
+mcp_servers:
+  - id: life_inbox_ocr_server
+    transport: stdio
+    command: ["python", "servers/ocr_server/server.py"]
+
+  - id: life_inbox_pdf_server
+    transport: stdio
+    command: ["python", "servers/pdf_server/server.py"]
+
+python:
+  requirements: requirements.txt
+  python_version: "3.10"
+
+10. UI (Gradio)
+Minimalist, clean, enterprise-level:
+Chat pane
+Right side “Cards” panel
+Buttons: “Organize my Life”, “Refresh Emails”, “Upload docs”
+
+11. WEEKLY DIGEST BLUEPRINT
+HTML template → PDF
+Upload to Drive
+Email user with Gmail ADK
+Sections:
+Events created
+Bills detected
+Receipts saved
+Documents uploaded
+Upcoming deadlines
+
+

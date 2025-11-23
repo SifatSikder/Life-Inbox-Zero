@@ -1,0 +1,60 @@
+project: LifeInboxZeroADK
+description: >
+  Life Inbox Zero — A multi-agent personal life organizer powered by
+  the Google ADK, MCP servers, and a hybrid chat + dashboard UI.
+  Automatically ingests the last 7 days of email, extracts documents,
+  classifies content, organizes tasks/events/bills, and prepares weekly summaries.
+
+runtime:
+  type: python
+  entrypoint: main.py
+  mode: single_process
+
+ui:
+  app: ui/app.py
+  title: Life Inbox Zero
+  icon: https://huggingface.co/datasets/hf-internal-testing/icons/resolve/main/mail.png
+
+agents:
+  - id: manager
+    path: agents/manager_agent.py
+    model: "gemini-2.5-pro"
+    description: Central coordinator agent. Plans workflow, supervises other agents, maintains system reasoning.
+
+  - id: ingestion
+    path: agents/ingestion_agent.py
+    model: "gemini-2.5-flash"
+    description: Fetches last 7 days of Gmail using ADK Gmail tools. Emits list of processed emails.
+
+  - id: extraction
+    path: agents/extraction_agent.py
+    model: "gemini-2.5-flash"
+    description: Extracts files from emails + documents using OCR & PDF MCP servers.
+
+  - id: categorization
+    path: agents/categorization_agent.py
+    model: "gemini-2.5-flash"
+    description: Classifies email/document content into tasks, events, receipts, bills, reminders.
+
+  - id: organizer
+    path: agents/organizer_agent.py
+    model: "gemini-2.5-pro"
+    description: Builds user-facing structured objects (task list, calendar events, bill reminders).
+
+  - id: summary
+    path: agents/summary_agent.py
+    model: "gemini-2.5-pro"
+    description: Generates weekly digest view + PDF summary for the UI.
+
+mcp_servers:
+  - id: life_inbox_ocr_server
+    transport: stdio
+    command: ["python", "servers/ocr_server/server.py"]
+
+  - id: life_inbox_pdf_server
+    transport: stdio
+    command: ["python", "servers/pdf_server/server.py"]
+
+python:
+  requirements: requirements.txt
+  python_version: "3.10"
